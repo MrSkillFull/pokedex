@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pokédex</title>
+</head>
+
+<style type="text/css" media="all">
+  :root{
+  }
+  html{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #DFDBE5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='%23fff100' fill-opacity='0.16'%3E%3Cpath d='M12 0h18v6h6v6h6v18h-6v6h-6v6H12v-6H6v-6H0V12h6V6h6V0zm12 6h-6v6h-6v6H6v6h6v6h6v6h6v-6h6v-6h6v-6h-6v-6h-6V6zm-6 12h6v6h-6v-6zm24 24h6v6h-6v-6z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+    max-width: 90vw;
+    margin: auto;
+  }
+  
+  body{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  figcaption{
+    font-size: 0.7rem;
+    font-style: italic;
+  }
+  img{
+    margin: 0 auto;
+    display: block;
+  }
+  #buscar-pokemon{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  #busca{
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    height: 40px;
+    padding: 5px;
+    background-color: white;
+  }
+  input[type=text]{
+    border: 0;
+    flex: 1;
+  }
+  #busca button{
+    background-color: #01127B;
+    border: 0;
+    color: white;
+    padding: 10px;
+  }
+  #painel{
+    background-color: white;
+    border-radius: 20px;
+    padding: 8px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  #detalhes-pokemon span{
+    color: #696A6C8F;
+    font-size: 0.8rem;
+  }
+  footer{
+    position: fixed;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background-color: white;
+    width: 100%;
+  }
+</style>
+  <!-- CSS -->
+
+<body>
+  
+  <header>
+    <figure>
+      <img width=200 src="../logo-pokedex.png" alt="logo da Pokedex" />
+      <figcaption align=center>Logo Pokedex inspirada na logo original de pokémon, feita com inteligência artificial</figcaption>
+    </figure>
+  </header>
+  <!-- header -->
+  
+  <main>
+    <section id="buscar-pokemon">
+      <div id="busca">
+        <input type="text" name="txt-busca" id="txt-busca-pokemon">
+        <button type="submit">Buscar</button>
+      </div>
+      <div id="painel"></div>
+    </section>
+  </main>
+  <!-- main -->
+  
+  <footer>
+    <p align=center style="font-size: 0.6rem;">Desenvolvido com ☕ por MrSkillFull</p>
+  </footer>
+  <!-- footer -->
+  
+  <!-- Javascript -->
+  <script>
+  
+  // recupera botão de busca
+  let botaoBuscarElemento = document.querySelector("#busca button");
+  
+  
+  // recupera e monta elementos do painel a partir do json
+  function montarPainel(json) {
+    
+    let painelElemento = document.getElementById("painel");
+    
+    painelElemento.innerHTML=
+    `
+      <span>Imagens do pokémon:</span>
+      <div style="display: flex;">
+        <img src="${json.sprites.front_default}"/>
+        <img src="${json.sprites.back_default}"/>
+      </div>
+      
+      <div id="detalhes-pokemon">
+        <span>Detalhes do pokémon:</span>
+        <p>ID: ${json.id}</p>
+        <p>Nome: ${json.name}</p>
+        <p>Altura: ${json.height}</p>
+        <p>Peso: ${json.weight}</p>
+        <p>Tipos: ${json.types[0].type.name}</p>
+      </div>
+    `
+    
+    
+  }
+  
+  // envia requisição GET à API dos pokémons e retorna o resultado em formato json
+  async function buscarPokemon(pokemon) {
+    let response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`);
+    let json = await response.json();
+    console.log(json);
+    
+    return json;
+  }
+  
+  // recupera input do usuário e retorna seu valor
+  function pegarValorPesquisado() {
+    
+    let elementoInput = document.getElementById('txt-busca-pokemon')
+    let valorPesquisado = elementoInput.value
+    
+    return valorPesquisado;
+  }
+  
+  // verifica click no botão de busca e chama métodos para buscar pokemon e montar painel
+  botaoBuscarElemento.addEventListener('click', async function(){
+    let valorPesquisado = pegarValorPesquisado().toLowerCase();
+      let json = await buscarPokemon(valorPesquisado);
+      montarPainel(json);
+  })
+    
+  </script>
+  
+</body>
+
+</html>
